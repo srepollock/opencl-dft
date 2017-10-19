@@ -13,15 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Libraries">
+      <UniqueIdentifier>{f99fd7d9-396b-4aab-a7ef-7bdbe0786226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Libraries\CL">
+      <UniqueIdentifier>{f830c781-7a35-4b7a-b927-7bab73405bf1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="SourceFiles\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
+    <ClInclude Include="HeaderFiles\main.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_d3d10.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_d3d11.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_dx9_media_sharing.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_dx9_media_sharing_intel.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_egl.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_ext.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_ext_intel.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_gl.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_gl_ext.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_platform.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_va_api_media_sharing_intel.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceFiles\Libraries\CL\opencl.h">
+      <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

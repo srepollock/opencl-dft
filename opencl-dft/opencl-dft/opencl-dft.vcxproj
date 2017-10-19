@@ -18,6 +18,25 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="SourceFiles\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HeaderFiles\main.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_d3d10.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_d3d11.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_dx9_media_sharing.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_dx9_media_sharing_intel.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_egl.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_ext.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_ext_intel.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_gl.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_gl_ext.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_platform.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\cl_va_api_media_sharing_intel.h" />
+    <ClInclude Include="ResourceFiles\Libraries\CL\opencl.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{9AB90115-7D62-470F-8A0D-B9FCA40A8452}</ProjectGuid>
@@ -72,6 +91,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)ResourceFiles\Libraries\;$(ProjectDir)HeaderFiles\;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectFiles)SourceFiles\;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -138,12 +159,6 @@
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="main.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
