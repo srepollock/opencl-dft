@@ -18,8 +18,8 @@ public:
         {
             for (int t = 0; t < n-1; t++)
             {
-                re += cos(2 * PI * f * t / n);
-                im -= sin(2 * PI * f * t / n);
+                re += s[t] * cos(2 * PI * f * t / n);
+                im -= s[t] * sin(2 * PI * f * t / n);
             }
             amp[f] = sqrt((re * re) + (im * im));
         }
