@@ -12,8 +12,8 @@ public:
     {
         double *amp = new double[n];
         double temp;
-        double re;
-        double im;
+        double re = 0;
+        double im = 0;
         for (int f = 0; f < n-1; f++)
         {
             for (int t = 0; t < n-1; t++)
