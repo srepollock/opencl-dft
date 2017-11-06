@@ -69,4 +69,9 @@
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SourceFiles\HelloWorld.cl">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
