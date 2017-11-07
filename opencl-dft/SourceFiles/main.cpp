@@ -7,7 +7,7 @@
 //      Authors: Aaftab Munshi, Benedict Gaster, Timothy Mattson, James Fung, Dan Ginsburg
 //
 /////////////////////////////////////////////////////////////////////////////////
-
+#pragma comment(lib, "OpenCL.lib")
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
@@ -16,6 +16,7 @@
 #include <sys/time.h>
 #include <OpenCL/cl.h>
 #else
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include <CL/cl.h>
 #include <Windows.h>
 
@@ -327,7 +328,7 @@ int main(int argc, char** argv)
     
 	// Create OpenCL program from HelloWorld.cl kernel source
 	// TODO: This is an absolute path and should be different
-    program = CreateProgram(context, device, "opencl-dft/SourceFiles/HelloWorld.cl");
+    program = CreateProgram(context, device, "HelloWorld.cl");
     if (program == NULL)
     {
         Cleanup(context, commandQueue, program, kernel, memObjects);

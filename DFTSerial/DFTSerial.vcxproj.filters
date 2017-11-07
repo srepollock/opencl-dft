@@ -14,64 +14,62 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Resource Files\Libraries">
-      <UniqueIdentifier>{f99fd7d9-396b-4aab-a7ef-7bdbe0786226}</UniqueIdentifier>
+      <UniqueIdentifier>{2bd5e8f5-bfbc-4dee-af8c-b6277b11cf79}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\Libraries\CL">
-      <UniqueIdentifier>{f830c781-7a35-4b7a-b927-7bab73405bf1}</UniqueIdentifier>
+      <UniqueIdentifier>{99fcffd0-f883-4b58-a274-5036edcce28f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SourceFiles\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="HeaderFiles\main.h">
+    <ClInclude Include="HeaderFiles\DFT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl.h">
+    <ClInclude Include="HeaderFiles\Samples.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_d3d10.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_d3d10.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_d3d11.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_d3d11.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_dx9_media_sharing.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_dx9_media_sharing.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_dx9_media_sharing_intel.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_dx9_media_sharing_intel.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_egl.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_egl.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_ext.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_ext.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_ext_intel.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_ext_intel.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_gl.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_gl.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_gl_ext.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_gl_ext.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_platform.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_platform.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\cl_va_api_media_sharing_intel.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\cl_va_api_media_sharing_intel.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceFiles\Libraries\CL\opencl.h">
+    <ClInclude Include="..\opencl-dft\ResourceFiles\Libraries\CL\opencl.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SourceFiles\HelloWorld.cl">
+    <ClCompile Include="SourceFiles\dftserially.cpp">
       <Filter>Source Files</Filter>
-    </None>
+    </ClCompile>
   </ItemGroup>
 </Project>
