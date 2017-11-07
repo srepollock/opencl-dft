@@ -23,4 +23,5 @@ int main(int argc, char ** argv)
     }
 
     std::cout<<"printf: "<< duration <<'\n';
+	std::getchar();
 }

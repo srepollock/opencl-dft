@@ -7,11 +7,12 @@
 //      Authors: Aaftab Munshi, Benedict Gaster, Timothy Mattson, James Fung, Dan Ginsburg
 //
 /////////////////////////////////////////////////////////////////////////////////
-#pragma comment(lib, "OpenCL.lib")
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "Samples.h"
 #ifdef __APPLE__
 #include <sys/time.h>
 #include <OpenCL/cl.h>
@@ -43,9 +44,8 @@ gettimeofday(struct timeval * tp, struct timezone * tzp)
     return 0;
 }
 #endif
-#include "main.h"
 //  Constants
-const int ARRAY_SIZE = 100000;
+const int ARRAY_SIZE = 32000; // number of samples for dft
 int array_size = 0;
 // Helper class for timing calculations
 class CTiming
@@ -272,11 +272,24 @@ bool CreateMemObjects(cl_context context, cl_mem memObjects[3],
     
     return true;
 }
+bool CreateDFTMemObjects(cl_context context, cl_mem memObjects[2], int *samples)
+{
+    memObjects[0] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                    sizeof(int) * array_size, samples, NULL);
+    memObjects[1] = clCreateBuffer(context, CL_MEM_READ_WRITE,
+                                    sizeof(double) * array_size, NULL, NULL);
+    if (memObjects[0] == NULL || memObjects[1] == NULL)
+    {
+        std::cerr << "Error creating memory objects." << std::endl;
+        return false;
+    }
+    return true;
+}
 //  Cleanup any created OpenCL resources
 void Cleanup(cl_context context, cl_command_queue commandQueue,
-             cl_program program, cl_kernel kernel, cl_mem memObjects[3])
+             cl_program program, cl_kernel kernel, cl_mem memObjects[2])
 {
-    for (int i = 0; i < 3; i++) // 3 is a magic number
+    for (int i = 0; i < 2; i++) // 3 is a magic number
     {
         if (memObjects[i] != 0)
             clReleaseMemObject(memObjects[i]);
@@ -292,7 +305,12 @@ void Cleanup(cl_context context, cl_command_queue commandQueue,
     
     if (context != 0)
         clReleaseContext(context);
-    
+}
+// Cleanup for the kernel
+void CleanupKernel(cl_kernel kernel)
+{
+    if (kernel != 0)
+        clReleaseKernel(kernel);
 }
 //	main() for HelloWorld example
 int main(int argc, char** argv)
@@ -306,7 +324,7 @@ int main(int argc, char** argv)
     cl_program program = 0;
     cl_device_id device = 0;
     cl_kernel kernel = 0;
-    cl_mem memObjects[3] = { 0, 0, 0 };
+    cl_mem memObjects[2] = { 0, 0 };
     cl_int errNum;
     
     // Create an OpenCL context on first available platform
@@ -316,7 +334,6 @@ int main(int argc, char** argv)
         std::cerr << "Failed to create OpenCL context." << std::endl;
         return 1;
     }
-    
     // Create a command-queue on the first device available
     // on the created context
     commandQueue = CreateCommandQueue(context, &device);
@@ -325,54 +342,45 @@ int main(int argc, char** argv)
         Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
-    
 	// Create OpenCL program from HelloWorld.cl kernel source
 	// TODO: This is an absolute path and should be different
-    program = CreateProgram(context, device, "HelloWorld.cl");
+    program = CreateProgram(context, device, "opencl-dft/SourceFiles/dftkernel.cl");
     if (program == NULL)
     {
         Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
-    
-    // Create OpenCL kernel
-    kernel = clCreateKernel(program, "hello_kernel", NULL);
+    // Create OpenCL kernels
+    kernel = clCreateKernel(program, "calculateDFTAtIndex", NULL);
     if (kernel == NULL)
     {
-        std::cerr << "Failed to create kernel" << std::endl;
+        std::cerr << "Failed to create kernel real" << std::endl;
         Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
     
+    //TODO: Regular DFT run here
     // Create memory objects that will be used as arguments to
     // kernel.  First create host memory arrays that will be
     // used to store the arguments to the kernel
-    float *result = new float[array_size];
-    float *a = new float[array_size];
-    float *b = new float[array_size];
-    for (int i = 0; i < array_size; i++)
-    {
-        a[i] = (float)i;
-        b[i] = (float)(i * 2);
-    }
-    
+    double *result = new double[array_size];
+    double *real = 0;
+    double *imaginary = 0;
     CTiming timer;
     int seconds, useconds;
-    timer.Start();
-    for (int i = 0; i < array_size; i++)
-    {
-        result[i] = a[i] + b[i];
-    }
-    timer.End();
-    if (timer.Diff(seconds, useconds))
-        std::cerr << "Warning: timer returned negative difference!" << std::endl;
-    std::cout << "Serially ran in " << seconds << "." << useconds << " seconds" << std::endl << std::endl;
+    // timer.Start();
+    // for (int i = 0; i < array_size; i++)
+    // {
+    //     result[i] = a[i] + b[i];
+    // }
+    // timer.End();
+    // if (timer.Diff(seconds, useconds))
+    //     std::cerr << "Warning: timer returned negative difference!" << std::endl;
+    // std::cout << "Serially ran in " << seconds << "." << useconds << " seconds" << std::endl << std::endl;
     
-    if (!CreateMemObjects(context, memObjects, a, b))
+    if (!CreateDFTMemObjects(context, memObjects, largeAudioSamples))
     {
         Cleanup(context, commandQueue, program, kernel, memObjects);
-        delete [] b;
-        delete [] a;
         delete [] result;
         return 1;
     }
@@ -385,8 +393,6 @@ int main(int argc, char** argv)
     {
         std::cerr << "Error setting kernel arguments." << std::endl;
         Cleanup(context, commandQueue, program, kernel, memObjects);
-        delete [] b;
-        delete [] a;
         delete [] result;
         return 1;
     }
@@ -395,35 +401,34 @@ int main(int argc, char** argv)
     size_t localWorkSize[1] = { 1 };
     
     timer.Start();
-    
     // Queue the kernel up for execution across the array
     errNum = clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
-                                    globalWorkSize, localWorkSize,
-                                    0, NULL, NULL);
+        globalWorkSize, localWorkSize,
+        0, NULL, NULL);
+    errNum |= clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
+        globalWorkSize, localWorkSize,
+        0, NULL, NULL);
+    errNum |= clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
+        globalWorkSize, localWorkSize,
+        0, NULL, NULL);
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error queuing kernel for execution." << std::endl;
         Cleanup(context, commandQueue, program, kernel, memObjects);
-        delete [] b;
-        delete [] a;
         delete [] result;
         return 1;
     }
-    
     // Read the output buffer back to the Host
-    errNum = clEnqueueReadBuffer(commandQueue, memObjects[2], CL_TRUE,
+    errNum = clEnqueueReadBuffer(commandQueue, memObjects[1], CL_TRUE,
                                  0, array_size * sizeof(float), result,
                                  0, NULL, NULL);
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error reading result buffer." << std::endl;
         Cleanup(context, commandQueue, program, kernel, memObjects);
-        delete [] b;
-        delete [] a;
         delete [] result;
         return 1;
     }
-    
     timer.End();
     if (timer.Diff(seconds, useconds))
         std::cerr << "Warning: timer returned negative difference!" << std::endl;
@@ -437,9 +442,6 @@ int main(int argc, char** argv)
     std::cout << std::endl << std::endl;
     std::cout << "Executed program succesfully." << std::endl;
     Cleanup(context, commandQueue, program, kernel, memObjects);
-    delete [] b;
-    delete [] a;
     delete [] result;
-    
     return 0;
 }

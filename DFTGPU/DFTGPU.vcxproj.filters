@@ -14,13 +14,27 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Resource Files\Libraries">
-      <UniqueIdentifier>{f99fd7d9-396b-4aab-a7ef-7bdbe0786226}</UniqueIdentifier>
+      <UniqueIdentifier>{e2883e71-817a-4b19-bd11-b4e901a5f98b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Resource Files\Libraries\CL">
-      <UniqueIdentifier>{f830c781-7a35-4b7a-b927-7bab73405bf1}</UniqueIdentifier>
+      <UniqueIdentifier>{61174a22-4fbd-4864-8b4f-da5ce4238e70}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="SourceFiles\dftgpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HeaderFiles\main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeaderFiles\DFT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeaderFiles\Samples.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="ResourceFiles\Libraries\CL\cl.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
@@ -60,21 +74,10 @@
     <ClInclude Include="ResourceFiles\Libraries\CL\opencl.h">
       <Filter>Resource Files\Libraries\CL</Filter>
     </ClInclude>
-    <ClInclude Include="HeaderFiles\DFT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HeaderFiles\Samples.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SourceFiles\dftkernel.cl">
+    <None Include="SourceFiles\dftgpu.cl">
       <Filter>Source Files</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="SourceFiles\dftopencl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
