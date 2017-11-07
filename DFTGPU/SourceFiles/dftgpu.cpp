@@ -12,10 +12,12 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "Samples.h"
 #ifdef __APPLE__
 #include <sys/time.h>
 #include <OpenCL/cl.h>
 #else
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
 #include <CL/cl.h>
 #include <Windows.h>
 
@@ -42,8 +44,6 @@ gettimeofday(struct timeval * tp, struct timezone * tzp)
     return 0;
 }
 #endif
-#include "main.h"
-#include "Samples.h"
 //  Constants
 const int ARRAY_SIZE = 32000; // number of samples for dft
 int array_size = 0;

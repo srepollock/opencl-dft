@@ -12,6 +12,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <conio.h>
 #ifdef __APPLE__
 #include <sys/time.h>
 #include <OpenCL/cl.h>
@@ -43,7 +44,6 @@ gettimeofday(struct timeval * tp, struct timezone * tzp)
     return 0;
 }
 #endif
-#include "main.h"
 //  Constants
 const int ARRAY_SIZE = 100000;
 int array_size = 0;
@@ -436,6 +436,8 @@ int main(int argc, char** argv)
     }
     std::cout << std::endl << std::endl;
     std::cout << "Executed program succesfully." << std::endl;
+	std::cout << "\nPress any key to continue..." << std::endl;
+	std::getchar();
     Cleanup(context, commandQueue, program, kernel, memObjects);
     delete [] b;
     delete [] a;
