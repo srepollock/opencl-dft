@@ -323,9 +323,7 @@ int main(int argc, char** argv)
     cl_command_queue commandQueue = 0;
     cl_program program = 0;
     cl_device_id device = 0;
-    cl_kernel kernel_real = 0;
-    cl_kernel kernel_imaginary = 0;
-    cl_kernel kernel_amplitude = 0;
+    cl_kernel kernel = 0;
     cl_mem memObjects[2] = { 0, 0 };
     cl_int errNum;
     
@@ -341,9 +339,7 @@ int main(int argc, char** argv)
     commandQueue = CreateCommandQueue(context, &device);
     if (commandQueue == NULL)
     {
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
 	// Create OpenCL program from HelloWorld.cl kernel source
@@ -351,37 +347,15 @@ int main(int argc, char** argv)
     program = CreateProgram(context, device, "opencl-dft/SourceFiles/dftkernel.cl");
     if (program == NULL)
     {
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
     // Create OpenCL kernels
-    kernel_real = clCreateKernel(program, "realNumber", NULL);
-    if (kernel_real == NULL)
+    kernel = clCreateKernel(program, "calculateDFTAtIndex", NULL);
+    if (kernel == NULL)
     {
         std::cerr << "Failed to create kernel real" << std::endl;
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
-        return 1;
-    }
-    kernel_imaginary = clCreateKernel(program, "imaginaryNumber", NULL);
-    if (kernel_imaginary == NULL)
-    {
-        std::cerr << "Failed to create kernel imaginary" << std::endl;
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
-        return 1;
-    }
-    kernel_amplitude = clCreateKernel(program, "aplitudeAtIndex", NULL);
-    if (kernel_amplitude == NULL)
-    {
-        std::cerr << "Failed to create kernel amplitude" << std::endl;
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         return 1;
     }
     
@@ -406,23 +380,19 @@ int main(int argc, char** argv)
     
     if (!CreateDFTMemObjects(context, memObjects, largeAudioSamples))
     {
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         delete [] result;
         return 1;
     }
     
     // Set the kernel arguments (result, a, b)
-    errNum = clSetKernelArg(kernel_real, 0, sizeof(cl_mem), &memObjects[0]);
-    errNum |= clSetKernelArg(kernel_real, 1, sizeof(cl_mem), &memObjects[1]);
-    errNum |= clSetKernelArg(kernel_real, 2, sizeof(cl_mem), &memObjects[2]);
+    errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), &memObjects[0]);
+    errNum |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &memObjects[1]);
+    errNum |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &memObjects[2]);
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error setting kernel arguments." << std::endl;
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         delete [] result;
         return 1;
     }
@@ -432,21 +402,19 @@ int main(int argc, char** argv)
     
     timer.Start();
     // Queue the kernel up for execution across the array
-    errNum = clEnqueueNDRangeKernel(commandQueue, kernel_real, 1, NULL,
+    errNum = clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
         globalWorkSize, localWorkSize,
         0, NULL, NULL);
-    errNum |= clEnqueueNDRangeKernel(commandQueue, kernel_imaginary, 1, NULL,
+    errNum |= clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
         globalWorkSize, localWorkSize,
         0, NULL, NULL);
-    errNum |= clEnqueueNDRangeKernel(commandQueue, kernel_amplitude, 1, NULL,
+    errNum |= clEnqueueNDRangeKernel(commandQueue, kernel, 1, NULL,
         globalWorkSize, localWorkSize,
         0, NULL, NULL);
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error queuing kernel for execution." << std::endl;
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         delete [] result;
         return 1;
     }
@@ -457,9 +425,7 @@ int main(int argc, char** argv)
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error reading result buffer." << std::endl;
-        Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-        CleanupKernel(kernel_real);
-        CleanupKernel(kernel_imaginary);
+        Cleanup(context, commandQueue, program, kernel, memObjects);
         delete [] result;
         return 1;
     }
@@ -475,9 +441,7 @@ int main(int argc, char** argv)
     }
     std::cout << std::endl << std::endl;
     std::cout << "Executed program succesfully." << std::endl;
-    Cleanup(context, commandQueue, program, kernel_amplitude, memObjects);
-    CleanupKernel(kernel_real);
-    CleanupKernel(kernel_imaginary);
+    Cleanup(context, commandQueue, program, kernel, memObjects);
     delete [] result;
     return 0;
 }
