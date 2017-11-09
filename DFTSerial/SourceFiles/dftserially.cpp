@@ -17,11 +17,13 @@ int main(int argc, char ** argv)
 
     duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
 
-    for (int i = 0; i < 32000; i++)
+    for (int i = 0; i < 100; i++)
     {
-        std::cout << amps[i] << std::endl;
+        std::cout << amps[i] << " ";
     }
+	std::cout << std::endl;
 
     std::cout<<"printf: "<< duration <<'\n';
+	std::cout << "Press 'Enter' to close..." << std::endl;
 	std::getchar();
 }
