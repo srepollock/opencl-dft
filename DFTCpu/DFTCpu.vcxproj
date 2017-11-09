@@ -117,6 +117,14 @@
     <ClCompile Include="SourceFiles\dftcpu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="SourceFiles\dftkernel.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SourceFiles\dftkernel.cl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="HeaderFiles\DFT.h" />
     <ClInclude Include="HeaderFiles\Samples.h" />
     <ClInclude Include="ResourceFiles\Libraries\CL\cl.h" />
@@ -132,9 +140,6 @@
     <ClInclude Include="ResourceFiles\Libraries\CL\cl_platform.h" />
     <ClInclude Include="ResourceFiles\Libraries\CL\cl_va_api_media_sharing_intel.h" />
     <ClInclude Include="ResourceFiles\Libraries\CL\opencl.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SourceFiles\dftcpu.cl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

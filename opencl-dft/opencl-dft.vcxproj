@@ -41,6 +41,11 @@
   <ItemGroup>
     <None Include="SourceFiles\dftkernel.cl" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="SourceFiles\dftkernel.cl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{9AB90115-7D62-470F-8A0D-B9FCA40A8452}</ProjectGuid>
@@ -133,6 +138,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)SourceFiles\dftkernel.cl $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

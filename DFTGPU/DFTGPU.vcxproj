@@ -117,7 +117,12 @@
     <ClCompile Include="SourceFiles\dftgpu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SourceFiles\dftgpu.cl" />
+    <None Include="SourceFiles\dftkernel.cl" />
+  </ItemGroup>
+    <ItemGroup>
+    <Content Include="SourceFiles\dftkernel.cl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HeaderFiles\DFT.h" />

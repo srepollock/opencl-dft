@@ -11,7 +11,6 @@ public:
     double* runDFT(int *s, int n)
     {
         double *amp = new double[n];
-        double temp;
         double re = 0;
         double im = 0;
         for (int f = 0; f < n-1; f++)

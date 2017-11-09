@@ -406,8 +406,8 @@ int main(int argc, const char *argv[])
         return 1;
     }
     
-    size_t globalWorkSize[1] = { (size_t)array_size };
-    size_t localWorkSize[1] = { 1 };
+    size_t globalWorkSize[1] = { (size_t)array_size / 8 };
+    size_t localWorkSize[1] = { 8 };
     
     timer.Start();
     
