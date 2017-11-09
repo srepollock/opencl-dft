@@ -8,11 +8,11 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 #pragma comment(lib, "OpenCL.lib")
+#include "Samples.h"
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <conio.h>
 #ifdef __APPLE__
 #include <sys/time.h>
 #include <OpenCL/cl.h>
@@ -45,7 +45,7 @@ gettimeofday(struct timeval * tp, struct timezone * tzp)
 }
 #endif
 //  Constants
-const int ARRAY_SIZE = 100000;
+const int ARRAY_SIZE = 32000;
 int array_size = 0;
 // Helper class for timing calculations
 class CTiming
@@ -258,9 +258,9 @@ bool CreateMemObjects(cl_context context, cl_mem memObjects[3],
                       float *a, float *b)
 {
     memObjects[0] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * array_size, a, NULL);
+                                sizeof(float) * array_size, a, NULL);
     memObjects[1] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                   sizeof(float) * array_size, b, NULL);
+                                sizeof(float) * array_size, b, NULL);
     memObjects[2] = clCreateBuffer(context, CL_MEM_READ_WRITE,
                                    sizeof(float) * array_size, NULL, NULL);
     
@@ -272,11 +272,26 @@ bool CreateMemObjects(cl_context context, cl_mem memObjects[3],
     
     return true;
 }
+bool CreateMemObjects(cl_context context, cl_mem memObjects[2], int *samples)
+{
+    memObjects[0] = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                    sizeof(int) * array_size, samples, NULL);
+    memObjects[1] = clCreateBuffer(context, CL_MEM_READ_WRITE,
+                    sizeof(double) * array_size, NULL, NULL);
+
+    if (memObjects[0] == NULL || memObjects[1] == NULL)
+    {
+    std::cerr << "Error creating memory objects." << std::endl;
+    return false;
+    }
+
+    return true;
+}
 //  Cleanup any created OpenCL resources
 void Cleanup(cl_context context, cl_command_queue commandQueue,
              cl_program program, cl_kernel kernel, cl_mem memObjects[3])
 {
-    for (int i = 0; i < 3; i++) // 3 is a magic number
+    for (int i = 0; i < 2; i++) // 3 is a magic number
     {
         if (memObjects[i] != 0)
             clReleaseMemObject(memObjects[i]);
@@ -295,7 +310,7 @@ void Cleanup(cl_context context, cl_command_queue commandQueue,
     
 }
 //	main() for HelloWorld example
-int main(int argc, char** argv)
+int main(int argc, const char *argv[])
 {
     array_size = ARRAY_SIZE;
     if (argc > 1)
@@ -306,7 +321,7 @@ int main(int argc, char** argv)
     cl_program program = 0;
     cl_device_id device = 0;
     cl_kernel kernel = 0;
-    cl_mem memObjects[3] = { 0, 0, 0 };
+    cl_mem memObjects[2] = { 0, 0 }; // samples, amplitudes
     cl_int errNum;
     
     // Create an OpenCL context on first available platform
@@ -328,7 +343,7 @@ int main(int argc, char** argv)
     
 	// Create OpenCL program from HelloWorld.cl kernel source
 	// TODO: This is an absolute path and should be different
-    program = CreateProgram(context, device, "HelloWorld.cl");
+    program = CreateProgram(context, device, "dftkernel.cl");
     if (program == NULL)
     {
         Cleanup(context, commandQueue, program, kernel, memObjects);
@@ -336,7 +351,7 @@ int main(int argc, char** argv)
     }
     
     // Create OpenCL kernel
-    kernel = clCreateKernel(program, "hello_kernel", NULL);
+    kernel = clCreateKernel(program, "dft", NULL);
     if (kernel == NULL)
     {
         std::cerr << "Failed to create kernel" << std::endl;
@@ -347,47 +362,47 @@ int main(int argc, char** argv)
     // Create memory objects that will be used as arguments to
     // kernel.  First create host memory arrays that will be
     // used to store the arguments to the kernel
-    float *result = new float[array_size];
-    float *a = new float[array_size];
-    float *b = new float[array_size];
+    double *amplitudes = new double[array_size]; // does this need tobe size_of?
+    int *samples = new int[array_size];
     for (int i = 0; i < array_size; i++)
     {
-        a[i] = (float)i;
-        b[i] = (float)(i * 2);
+        samples[i] = largeAudioSamples[i];
     }
-    
     CTiming timer;
     int seconds, useconds;
-    timer.Start();
-    for (int i = 0; i < array_size; i++)
-    {
-        result[i] = a[i] + b[i];
-    }
-    timer.End();
-    if (timer.Diff(seconds, useconds))
-        std::cerr << "Warning: timer returned negative difference!" << std::endl;
-    std::cout << "Serially ran in " << seconds << "." << useconds << " seconds" << std::endl << std::endl;
-    
-    if (!CreateMemObjects(context, memObjects, a, b))
+    if (!CreateMemObjects(context, memObjects, samples))
     {
         Cleanup(context, commandQueue, program, kernel, memObjects);
-        delete [] b;
-        delete [] a;
-        delete [] result;
+        delete [] amplitudes;
         return 1;
     }
     
-    // Set the kernel arguments (result, a, b)
-    errNum = clSetKernelArg(kernel, 0, sizeof(cl_mem), &memObjects[0]);
-    errNum |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &memObjects[1]);
-    errNum |= clSetKernelArg(kernel, 2, sizeof(cl_mem), &memObjects[2]);
+    // Set the kernel arguments (n, sample, amplitude)
+    errNum = clSetKernelArg(kernel, 0, sizeof(cl_int), &array_size);
     if (errNum != CL_SUCCESS)
     {
-        std::cerr << "Error setting kernel arguments." << std::endl;
+        std::cerr << "Error setting kernel 0 arguments." << std::endl;
+        std::cerr << errNum << std::endl;
         Cleanup(context, commandQueue, program, kernel, memObjects);
-        delete [] b;
-        delete [] a;
-        delete [] result;
+        delete [] amplitudes;
+        return 1;
+    }
+    errNum = clSetKernelArg(kernel, 1, sizeof(cl_mem), &memObjects[0]);
+    if (errNum != CL_SUCCESS)
+    {
+        std::cerr << "Error setting kernel 1 arguments." << std::endl;
+        std::cerr << errNum << std::endl;
+        Cleanup(context, commandQueue, program, kernel, memObjects);
+        delete [] amplitudes;
+        return 1;
+    }
+    errNum = clSetKernelArg(kernel, 2, sizeof(cl_mem), &memObjects[1]);
+    if (errNum != CL_SUCCESS)
+    {
+        std::cerr << "Error setting kernel 2 arguments." << std::endl;
+        std::cerr << errNum << std::endl;
+        Cleanup(context, commandQueue, program, kernel, memObjects);
+        delete [] amplitudes;
         return 1;
     }
     
@@ -404,23 +419,19 @@ int main(int argc, char** argv)
     {
         std::cerr << "Error queuing kernel for execution." << std::endl;
         Cleanup(context, commandQueue, program, kernel, memObjects);
-        delete [] b;
-        delete [] a;
-        delete [] result;
+        delete [] amplitudes;
         return 1;
     }
     
     // Read the output buffer back to the Host
-    errNum = clEnqueueReadBuffer(commandQueue, memObjects[2], CL_TRUE,
-                                 0, array_size * sizeof(float), result,
+    errNum = clEnqueueReadBuffer(commandQueue, memObjects[1], CL_TRUE,
+                                 0, array_size * sizeof(double), amplitudes,
                                  0, NULL, NULL);
     if (errNum != CL_SUCCESS)
     {
         std::cerr << "Error reading result buffer." << std::endl;
         Cleanup(context, commandQueue, program, kernel, memObjects);
-        delete [] b;
-        delete [] a;
-        delete [] result;
+        delete [] amplitudes;
         return 1;
     }
     
@@ -432,16 +443,12 @@ int main(int argc, char** argv)
     // Output (some of) the result buffer
     for (int i = 0; i < ((array_size>100) ? 100 : array_size); i++)
     {
-        std::cout << result[i] << " ";
+        std::cout << amplitudes[i] << " ";
     }
     std::cout << std::endl << std::endl;
     std::cout << "Executed program succesfully." << std::endl;
-	std::cout << "\nPress any key to continue..." << std::endl;
-	std::getchar();
     Cleanup(context, commandQueue, program, kernel, memObjects);
-    delete [] b;
-    delete [] a;
-    delete [] result;
+    delete [] amplitudes;
     
     return 0;
 }
