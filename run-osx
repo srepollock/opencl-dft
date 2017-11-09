@@ -1,0 +1,5 @@
+#!/bin/sh
+./dftserial.out
+./dftopenclcpu.out
+./dftopenclgpu.out
+./dftopencl.out
