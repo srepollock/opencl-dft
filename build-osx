@@ -1,0 +1,5 @@
+#!/bin/sh
+clang++ -std=c++11 ./DFTSerial/SourceFiles/dftserially.cpp -I./DFTSerial/HeaderFiles -I./DFTSerial/ResourceFiles/Libraries -framework OpenCL -g -o dftserial.out
+clang++ -std=c++11 ./DFTCpu/SourceFiles/dftcpu.cpp -I./DFTCpu/HeaderFiles -I./DFTCpu/ResourceFiles/Libraries -framework OpenCL -g -o dftopenclcpu.out
+clang++ -std=c++11 ./DFTGPU/SourceFiles/dftgpu.cpp -I./DFTGPU/HeaderFiles -I./DFTGPU/ResourceFiles/Libraries -framework OpenCL -g -o dftopenclgpu.out
+clang++ -std=c++11 ./opencl-dft/SourceFiles/dftopencl.cpp -I./opencl-dft/HeaderFiles -I./opencl-dft/ResourceFiles/Libraries -framework OpenCL -g -o dftopencl.out
